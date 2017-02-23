@@ -28,6 +28,7 @@
     "stacked": "^1.1.1"
   },
   "dependencies": {
-    "command-exists": "^1.2.1"
+    "command-exists": "^1.2.1",
+    "http-proxy-middleware": "^0.17.3"
   }
 }

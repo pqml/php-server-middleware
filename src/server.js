@@ -5,7 +5,7 @@ const commandExists = require('command-exists')
 const getPort = require('./getPort')
 const Emitter = require('events')
 
-const defaultOpts = {
+const DEF_OPTS = {
   bin: false,
   host: '0.0.0.0',
   port: 35410,
@@ -15,17 +15,17 @@ const defaultOpts = {
 }
 
 function server (opts) {
-  opts = Object.assign({}, defaultOpts, opts || {})
-
-  const api = new Emitter()
-  api.start = start
-  api.close = close
+  opts = Object.assign({}, DEF_OPTS, opts || {})
 
   let usedPort = false
   let closed = false
   let started = false
   let handler
 
+  const api = new Emitter()
+  api.start = start
+  api.close = close
+  api.isStarted = function () { return started }
   return api
 
   function log (msg, force) {
@@ -76,6 +76,7 @@ function server (opts) {
   function close () {
     closed = true
     if (!handler || !started) return
+    started = false
     handler.kill()
   }
 }
