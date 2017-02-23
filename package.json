@@ -1,6 +1,6 @@
 {
   "name": "php-middleware",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Simple php express-like middleware using the php built-in server",
   "main": "index.js",
   "scripts": {
