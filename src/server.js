@@ -17,7 +17,6 @@ const DEF_OPTS = {
 function server (opts) {
   opts = Object.assign({}, DEF_OPTS, opts || {})
 
-  let usedPort = false
   let closed = false
   let started = false
   let handler
@@ -44,20 +43,20 @@ function server (opts) {
     return new Promise((resolve, reject) => {
       getPort(opts.port)
         .then(resolvedPort => {
-          usedPort = resolvedPort
-          const addr = opts.host + ':' + usedPort
+          if (closed) {
+            close()
+            resolve()
+          }
+          const addr = opts.host + ':' + resolvedPort
+
           handler = spawn('php', ['-S', addr, '-t', opts.root])
           handler.stdout.on('data', handleData)
           handler.stderr.on('data', handleData)
-          handler.on('close', code => {
-            log('Server closed.\n')
-            api.emit('close', { code: code })
-          })
-          if (!started) {
-            started = true
-            log('Server started on port ' + usedPort + '.\n')
-            api.emit('start', { port: usedPort })
-          }
+          handler.on('close', close)
+
+          started = true
+          log('Server started on port ' + resolvedPort + '.\n')
+          api.emit('start', { port: resolvedPort })
         })
         .catch(reject)
     })
@@ -65,6 +64,8 @@ function server (opts) {
 
   function start () {
     return new Promise((resolve, reject) => {
+      closed = false
+      if (started) return resolve()
       commandExists('php')
         .then(() => startProcess())
         .catch(() => {
@@ -73,11 +74,15 @@ function server (opts) {
     })
   }
 
-  function close () {
+  function close (code) {
+    code = code !== undefined ? code : 0
     closed = true
     if (!handler || !started) return
     started = false
     handler.kill()
+    handler.removeAllListeners()
+    log('Server closed.\n')
+    api.emit('close', { code: code })
   }
 }
 

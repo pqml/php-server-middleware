@@ -1,15 +1,19 @@
 {
   "name": "php-middleware",
-  "version": "0.2.0",
-  "description": "Simple php express-like middleware using the php built-in server",
+  "version": "0.3.0",
+  "description": "Simple php connect-like middleware using the php built-in server",
   "main": "index.js",
   "scripts": {
     "test": "npm run lint",
     "lint": "snazzy index.js"
   },
+  "files": [
+    "src",
+    "index.js"
+  ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pqml/php-middleware.git"
+    "url": "git+https://github.com/pqml/php-server-middleware.git"
   },
   "keywords": [
     "php",
@@ -20,9 +24,9 @@
   "author": "pqml",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pqml/php-middleware/issues"
+    "url": "https://github.com/pqml/php-server-middleware/issues"
   },
-  "homepage": "https://github.com/pqml/php-middleware#readme",
+  "homepage": "https://github.com/pqml/php-server-middleware#readme",
   "devDependencies": {
     "snazzy": "^6.0.0",
     "stacked": "^1.1.1"

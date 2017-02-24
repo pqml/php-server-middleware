@@ -4,6 +4,7 @@ const url = require('url')
 const path = require('path')
 const proxy = require('http-proxy-middleware')
 const phpServer = require('./server')
+const callStable = require('./call-stable')
 const fs = require('fs')
 
 const PHP_EXTS = ['.php', '.php5']
@@ -21,7 +22,10 @@ function createMiddleware (opts) {
   const serv = phpServer(opts)
   serv.middleware = middleware
 
-  serv.start()
+  const startServer = callStable(serv.start, () => {
+    throw new Error('Php built-in server closes too often.')
+  })
+
   serv.on('start', (data) => {
     handler = proxy({
       target: 'http://' + opts.host + ':' + data.port,
@@ -29,7 +33,12 @@ function createMiddleware (opts) {
     })
   })
 
-  return serv
+  serv.on('close', (data) => {
+    startServer()
+  })
+
+  startServer()
+  return middleware
 
   function middleware (req, res, next) {
     if (!handler) return next()
