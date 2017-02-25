@@ -1,6 +1,6 @@
 {
   "name": "php-server-middleware",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Simple php connect-like middleware using the php built-in server",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/pqml/php-server-middleware#readme",
   "devDependencies": {
+    "serve-static": "^1.11.2",
     "snazzy": "^6.0.0",
     "stacked": "^1.1.1"
   },

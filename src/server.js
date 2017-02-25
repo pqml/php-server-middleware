@@ -29,7 +29,7 @@ function server (opts) {
 
   function log (msg, force) {
     if ((!opts.verbose && !force) || opts.quiet) return
-    process.stdout.write('[php] ' + msg)
+    process.stdout.write('[PHP] ' + msg)
   }
 
   function handleData (data) {

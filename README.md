@@ -40,6 +40,29 @@ Return a connect-like middleware function and auto-start the php server used by 
 * Default: `process.cwd()`
 * The document root of the php server
 
+##### `headersRewrite` (Boolean)
+* Default: `true`
+* Rewrites the location host/port on (301/302/307/308) redirects based on requested host/port.
+
+##### `bodyRewrite` (Boolean)
+* Default: `true`
+* Replace all `proxyHost:proxyPort` by `requestedHost:requestedPort` from the response body
+* Works only for these MIME-types:
+    - text/html
+    - text/css
+    - text/xml
+    - text/javascript
+    - application/javascript
+    - application/json
+
+##### `handle404` (Boolean)
+* Default: `true`
+* Let php handle not-found paths - basically allowing you to use .htaccess features like url-rewriting
+
+##### `proxyOpts` (Object)
+* Default: `{}`
+* [http-proxy-middleware](https://www.npmjs.com/package/http-proxy-middleware) options
+
 ##### `verbose` (Boolean)
 * Default: `false`
 * Log additional informations
