@@ -1,11 +1,10 @@
-'use strict'
-
+const fs = require('fs')
 const url = require('url')
 const path = require('path')
+
 const proxy = require('http-proxy-middleware')
-const phpServer = require('./server')
-const callStable = require('./call-stable')
-const fs = require('fs')
+const php = require('@pqml/node-php-server')
+
 
 const WRITEABLE_MIME_TYPES = [
   'text/html',
@@ -15,16 +14,20 @@ const WRITEABLE_MIME_TYPES = [
   'application/javascript',
   'application/json'
 ]
+
 const PHP_EXTS = ['.php', '.php5']
+
 const DEF_OPTS = {
-  host: '0.0.0.0',
+  host: '127.0.0.1',
   port: 35410,
   root: process.cwd(),
   verbose: false,
   headersRewrite: true,
-  bodyRewrite: false,
+  bodyRewrite: true,
   handle404: true,
-  proxyOpts: {}
+  proxyOpts: {},
+  autorestart: true,
+  headers: {}
 }
 
 function createMiddleware (opts) {
@@ -32,33 +35,29 @@ function createMiddleware (opts) {
 
   let proxyAddr = ''
   let proxyMiddleware = null
-  const serv = phpServer(opts)
+  const serv = php(opts)
   serv.middleware = middleware
 
-  const startServer = callStable(serv.start, () => {
-    throw new Error('Php built-in server closes too often.')
-  })
-
-  serv.on('start', (data) => {
-    proxyAddr = opts.host + ':' + data.port
+  serv.on('start', ({host, port}) => {
+    proxyAddr = (host === 'localhost' ? '[::1]' : host) + ':' + port
     proxyMiddleware = proxy(Object.assign({
       target: 'http://' + proxyAddr,
       logLevel: opts.verbose ? 'info' : 'silent',
       autoRewrite: opts.headersRewrite,
-      changeOrigin: true
+      changeOrigin: true,
+      headers: opts.headers
     }, opts.proxyOpts))
   })
 
-  serv.on('close', (data) => {
-    startServer()
-  })
+  serv.on('error', (data) => {})
 
-  startServer()
+  serv.start()
+
   return middleware
 
   function handle (req, res, next) {
     if (opts.bodyRewrite) {
-      var _write = res.write
+      const _write = res.write
       res.write = function (data) {
         let contentType = res.getHeader('content-type')
         if (!contentType) return _write.call(res, data)
@@ -76,6 +75,7 @@ function createMiddleware (opts) {
   }
 
   function middleware (req, res, next) {
+    // if not starter we pass to the next middleware without waiting
     if (!proxyMiddleware) return next()
 
     let pathname = url.parse(req.url).pathname

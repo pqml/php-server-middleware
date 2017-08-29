@@ -29,8 +29,9 @@ Return a connect-like middleware function and auto-start the php server used by 
 
 #### Options
 ##### `host` (String)
-* Default: `'0.0.0.0'`
+* Default: `'127.0.0.1'`
 * The host the php server will listen on
+* There is an issue between `node-proxy` and the built-in php server when php serves from `localhost`. To fix this, `localhost' will be proxy as `[::1]`. Note that it can break host/port rewriting in headers/body response.
 
 ##### `port` (Number)
 * Default: `'35410'`
@@ -55,9 +56,13 @@ Return a connect-like middleware function and auto-start the php server used by 
     - application/javascript
     - application/json
 
+##### `headers` (Object)
+* Default: `{}`
+* Adds request headers
+
 ##### `handle404` (Boolean)
 * Default: `true`
-* Let php handle not-found paths - basically allowing you to use .htaccess features like url-rewriting
+* Let php handle not-found filepaths
 
 ##### `proxyOpts` (Object)
 * Default: `{}`
