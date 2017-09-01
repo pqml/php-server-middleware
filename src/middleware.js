@@ -28,8 +28,8 @@ const DEF_OPTS = {
   proxyOpts: {},
   autorestart: true,
   headers: {},
-  bin: 'phdp',
-  promptBinary: true,
+  bin: 'php',
+  promptBinary: false,
   onStart() {}
 }
 
