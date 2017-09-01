@@ -27,7 +27,10 @@ const DEF_OPTS = {
   handle404: true,
   proxyOpts: {},
   autorestart: true,
-  headers: {}
+  headers: {},
+  bin: 'phdp',
+  promptBinary: true,
+  onStart() {}
 }
 
 function createMiddleware (opts) {
@@ -47,6 +50,7 @@ function createMiddleware (opts) {
       changeOrigin: true,
       headers: opts.headers
     }, opts.proxyOpts))
+    opts.onStart()
   })
 
   serv.on('error', (data) => {})

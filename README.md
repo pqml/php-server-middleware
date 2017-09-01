@@ -76,7 +76,15 @@ Return a connect-like middleware function and auto-start the php server used by 
 * Default: `false`
 * If true, don't write anything to the console
 
-<br><br>
+##### `onStart` (Function)
+* Default: `function () {}`
+* The onStart function will be called when the php built-in server is ready.
 
-### Todo
-* `binary` option to use a path to a php binary to add Windows support
+##### `bin` (String)
+* Default: `php`
+* Absolute Path / Alias to the php binary
+
+##### `promptBinary` (Boolean)
+* Default: `false`
+* If set to true and php isn't found, the middleware will ask the user a path/alias to a php binary
+* Be careful to not have other log during the middleware setup when using this. You can use the `onStart` options to wait for the middleware to be ready before logging anything else
