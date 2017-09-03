@@ -26,6 +26,7 @@ const DEF_OPTS = {
   bodyRewrite: true,
   handle404: true,
   proxyOpts: {},
+  phpOpts: {},
   autorestart: true,
   headers: {},
   bin: 'php',
@@ -38,7 +39,7 @@ function createMiddleware (opts) {
 
   let proxyAddr = ''
   let proxyMiddleware = null
-  const serv = php(opts)
+  const serv = php(Object.assign({}, opts, opts.phpOpts))
   serv.middleware = middleware
 
   serv.on('start', ({host, port}) => {

@@ -6,7 +6,7 @@ const serveStatic = require('serve-static')
 let app = stacked()
 const serv = http.createServer(app)
 
-const php = phpMiddleware({ onStart })
+const php = phpMiddleware({ onStart, verbose: true })
 
 app.use(php)
 app.use(serveStatic(process.cwd()))

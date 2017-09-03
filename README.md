@@ -68,6 +68,10 @@ Return a connect-like middleware function and auto-start the php server used by 
 * Default: `{}`
 * [http-proxy-middleware](https://www.npmjs.com/package/http-proxy-middleware) options
 
+##### `phpOpts` (Object)
+* Default: `{}`
+* [@pqml/node-php-server](https://github.com/pqml/node-php-server) options
+
 ##### `verbose` (Boolean)
 * Default: `false`
 * Log additional informations
