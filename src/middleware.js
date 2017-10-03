@@ -48,7 +48,7 @@ function createMiddleware (opts) {
     // php server can't be reach through localhost, we have to use [::1]
     proxyAddr = (host === 'localhost' ? '[::1]' : host) + ':' + port
 
-    // urlencode() from php encode '[' and ']'.
+    // urlencode() from php encodes '[' and ']'.
     // this fix rewrites urls encoded from php
     if (host === 'localhost') encodedProxyAddr = '%5B::1%5D' + ':' + port
 
