@@ -1,6 +1,6 @@
 {
   "name": "php-server-middleware",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Simple php connect-like middleware using the php built-in server",
   "main": "index.js",
   "scripts": {},

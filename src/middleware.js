@@ -38,12 +38,20 @@ function createMiddleware (opts) {
   opts = Object.assign({}, DEF_OPTS, opts || {})
 
   let proxyAddr = ''
+  let encodedProxyAddr = null
   let proxyMiddleware = null
   const serv = php(Object.assign({}, opts, opts.phpOpts))
   serv.middleware = middleware
 
   serv.on('start', ({host, port}) => {
+
+    // php server can't be reach through localhost, we have to use [::1]
     proxyAddr = (host === 'localhost' ? '[::1]' : host) + ':' + port
+
+    // urlencode() from php encode '[' and ']'.
+    // this fix rewrites urls encoded from php
+    if (host === 'localhost') encodedProxyAddr = '%5B::1%5D' + ':' + port
+
     proxyMiddleware = proxy(Object.assign({
       target: 'http://' + proxyAddr,
       logLevel: opts.verbose ? 'info' : 'silent',
@@ -61,6 +69,9 @@ function createMiddleware (opts) {
   return middleware
 
   function handle (req, res, next) {
+    // Pass the real client host through X-Forwarded-Host header
+    req.headers['X-Forwarded-Host'] = req.headers.host
+
     if (opts.bodyRewrite) {
       const _write = res.write
       res.write = function (data) {
@@ -68,9 +79,15 @@ function createMiddleware (opts) {
         if (!contentType) return _write.call(res, data)
         contentType = contentType.trim().split(';')[0] || ''
         if (WRITEABLE_MIME_TYPES.indexOf(contentType) !== -1) {
-          _write.call(res, data.toString()
+          let nData = data.toString()
             .split(proxyAddr)
-            .join(req.headers.host))
+            .join(req.headers.host)
+          if (encodedProxyAddr) {
+            nData = nData
+              .split(encodedProxyAddr)
+              .join(req.headers.host)
+          }
+          _write.call(res, nData)
         } else {
           _write.call(res, data)
         }
